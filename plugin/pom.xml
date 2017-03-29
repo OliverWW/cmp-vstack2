@@ -11,6 +11,7 @@
     <modules>
         <module>nfsPrimaryStorage</module>
         <module>kvm</module>
+	<module>pubCloud</module>
         <module>sftpBackupStorage</module>
         <module>virtualRouterProvider</module>
         <module>securityGroup</module>

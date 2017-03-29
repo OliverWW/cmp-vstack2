@@ -1,6 +1,7 @@
 package org.zstack.header.vm;
 
 import org.zstack.header.message.NeedReplyMessage;
+import org.zstack.header.vm.VmInstanceMessage;
 
 /**
  * Created with IntelliJ IDEA.

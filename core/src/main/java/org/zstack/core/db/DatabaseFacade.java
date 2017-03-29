@@ -39,10 +39,13 @@ public interface DatabaseFacade {
     void removeCollection(Collection entities, Class entityClazz);
 
     void removeByPrimaryKeys(Collection priKeys, Class entityClazz);
+    
+    void removeByColumName(Class entityClass, String name, String value);
 
     void removeByPrimaryKey(Object primaryKey, Class<?> entityClass);
 
     void hardDeleteCollectionSelectedBySQL(String sql, Class entityClass);
+    void clearDB(Class entityClass) ;
 
     CriteriaBuilder  getCriteriaBuilder();
     
@@ -69,6 +72,8 @@ public interface DatabaseFacade {
     void eoCleanup(Class VOClazz);
 
     DataSource getDataSource();
+    
+    <T> List<T> listByColumName(Class entityClass, String name, String value);
 
     DataSource getExtraDataSource();
 
@@ -77,4 +82,7 @@ public interface DatabaseFacade {
     String getDbVersion();
 
     void installEntityLifeCycleCallback(Class entityClass, EntityEvent evt, EntityLifeCycleCallback cb);
+
+
+    <T>  T findByColumName(Class entityClass, String name, String value);
 }

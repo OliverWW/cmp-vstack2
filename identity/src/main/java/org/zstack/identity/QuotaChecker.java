@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by frank on 7/30/2015.
@@ -42,25 +43,18 @@ public class QuotaChecker implements GlobalApiMessageInterceptor {
             return msg;
         }
 
-        Quota quota = acntMgr.getMessageQuotaMap().get(msg.getClass());
-        if (quota == null) {
+        List<Quota> quotas = acntMgr.getMessageQuotaMap().get(msg.getClass());
+        if (quotas == null || quotas.size() == 0) {
             return msg;
         }
-
-        SimpleQuery<AccountVO> q = dbf.createQuery(AccountVO.class);
-        q.select(AccountVO_.type);
-        q.add(AccountVO_.uuid, Op.EQ, msg.getSession().getAccountUuid());
-        AccountType type = q.findValue();
-
-        if (type != AccountType.SystemAdmin) {
-            check(msg, quota);
+        for (Quota q : quotas) {
+            check(msg, q);
         }
-        
         return msg;
     }
 
     private Map<String, QuotaPair> makeQuotaPairs(Quota quota, SessionInventory session) {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         for (QuotaPair p : quota.getQuotaPairs()) {
             names.add(p.getName());
         }
@@ -72,7 +66,7 @@ public class QuotaChecker implements GlobalApiMessageInterceptor {
         q.add(QuotaVO_.name, Op.IN, names);
         List<Tuple> ts = q.listTuple();
 
-        Map<String, QuotaPair> pairs = new HashMap<String, QuotaPair>();
+        Map<String, QuotaPair> pairs = new HashMap<>();
         for (Tuple t : ts) {
             String name = t.get(0, String.class);
             long value = t.get(1, Long.class);
@@ -88,5 +82,11 @@ public class QuotaChecker implements GlobalApiMessageInterceptor {
     private void check(APIMessage msg, Quota quota) {
         Map<String, QuotaPair> pairs = makeQuotaPairs(quota, msg.getSession());
         quota.getOperator().checkQuota(msg, pairs);
+
+        if (quota.getQuotaValidators() != null) {
+            for (Quota.QuotaValidator q : quota.getQuotaValidators()) {
+                q.checkQuota(msg, pairs);
+            }
+        }
     }
 }
