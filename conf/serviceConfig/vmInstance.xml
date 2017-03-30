@@ -46,6 +46,12 @@
         <name>org.zstack.header.vm.APIGetVmInstanceMsg</name>
     </message>
     <message>
+        <name>org.zstack.header.vm.APIGetPubCloudTypesMsg</name>
+    </message>
+     <message>
+        <name>org.zstack.header.vm.APIQueryPubVmInstanceOfferingMsg</name>
+    </message>
+    <message>
         <name>org.zstack.header.vm.APIListVmNicMsg</name>
     </message>
     <message>

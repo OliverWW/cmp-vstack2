@@ -73,7 +73,9 @@ import org.zstack.identity.AccountManager;
 import org.zstack.search.SearchQuery;
 import org.zstack.tag.TagManager;
 import org.zstack.utils.CollectionUtils;
+import org.zstack.utils.JsonUtils;
 import org.zstack.utils.ObjectUtils;
+import org.zstack.utils.PubCloud;
 import org.zstack.utils.TagUtils;
 import org.zstack.utils.Utils;
 import org.zstack.utils.data.SizeUnit;
@@ -196,7 +198,11 @@ public class VmInstanceManagerImpl extends AbstractService implements VmInstance
     private void handleApiMessage(APIMessage msg) {
         if (msg instanceof APICreateVmInstanceMsg) {
             handle((APICreateVmInstanceMsg) msg);
-        } else if (msg instanceof APIListVmInstanceMsg) {
+        } else if (msg instanceof APIGetPubCloudTypesMsg) {
+			handle((APIGetPubCloudTypesMsg) msg);
+		} else if (msg instanceof APIQueryPubVmInstanceOfferingMsg) {
+			handle((APIQueryPubVmInstanceOfferingMsg) msg);
+		}  else if (msg instanceof APIListVmInstanceMsg) {
             handle((APIListVmInstanceMsg)msg);
         } else if (msg instanceof APISearchVmInstanceMsg) {
             handle((APISearchVmInstanceMsg) msg);
@@ -431,6 +437,36 @@ public class VmInstanceManagerImpl extends AbstractService implements VmInstance
         }
         bus.reply(msg, reply);
     }
+    
+    private void handle(APIGetPubCloudTypesMsg msg) {
+		List<PubCloud> pubcloudTypes = JsonUtils.getPubCloudConf("../webapps/zstack/WEB-INF/classes/pubCloudInfo.xml");
+		List<String> res = new ArrayList<String>();
+		if (pubcloudTypes.size() != 0) {
+			for (PubCloud tem : pubcloudTypes)
+				res.add(tem.getName());
+		}
+		APIGetPubCloudTypesReply reply = new APIGetPubCloudTypesReply();
+		reply.setCloudTypes(res);
+		bus.reply(msg, reply);
+	}
+
+	private void handle(APIQueryPubVmInstanceOfferingMsg msg) {
+		APIQueryPubVmInstanceOfferingReply reply = new APIQueryPubVmInstanceOfferingReply();
+		List<PubCloud> pubcloudTypes = JsonUtils.getPubCloudConf("../webapps/zstack/WEB-INF/classes/pubCloudInfo.xml");
+		PubCloud selectType = new PubCloud();
+		if (pubcloudTypes.size() != 0) {
+			for (PubCloud tem : pubcloudTypes){
+				if (tem.getName().equals(msg.getCloudType())){
+					selectType = tem;
+				}
+			}
+				 
+		}
+		
+		reply.setInstanceOffering(selectType.getInstanceMD());
+		reply.setImages(selectType.getImages());
+		bus.reply(msg, reply);
+	}
 
     private void handle(APISearchVmInstanceMsg msg) {
         SearchQuery<VmInstanceInventory> query = SearchQuery.create(msg, VmInstanceInventory.class);
