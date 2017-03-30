@@ -15,7 +15,16 @@ public class IdentityCanonicalEvents {
     public static class AccountDeletedData {
         private String accountUuid;
         private AccountInventory inventory;
-        private Date date = new Date();
+        private PubAccountInventory pubinventory;
+        public PubAccountInventory getPubinventory() {
+			return pubinventory;
+		}
+
+		public void setPubinventory(PubAccountInventory pubinventory) {
+			this.pubinventory = pubinventory;
+		}
+
+		private Date date = new Date();
 
         public String getAccountUuid() {
             return accountUuid;

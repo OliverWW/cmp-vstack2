@@ -169,4 +169,17 @@
     <message>
         <name>org.zstack.header.identity.APIChangeResourceOwnerMsg</name>
     </message>
+    
+    <message>
+        <name>org.zstack.header.identity.APIQueryPubAccountMsg</name>
+        <serviceId>query</serviceId>
+    </message>
+    
+    <message>
+        <name>org.zstack.header.identity.APICreatePubAccountMsg</name>
+    </message>
+    
+    <message>
+        <name>org.zstack.header.identity.APIDeletePubAccountMsg</name>
+    </message>
 </service>

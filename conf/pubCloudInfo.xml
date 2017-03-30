@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pubClouds>
+	<pubCloud>
+		<name>ECS</name>
+		<!-- 配置模板根据云厂商提供的方式进行填写。如云厂商没有提供模板，则InstanceModel为空。若提供，则分别填上，然后在agent端进行匹配转换为云商的模板 -->
+		<InstanceModels>
+			<InstanceModel>
+				<uuid>ecs.n1.tiny</uuid>    <!-- uuid请确保不同的配置模板不同ID -->
+				<cpuNum>1</cpuNum>
+				<memory>1G</memory>
+			</InstanceModel>
+			<InstanceModel>
+				<uuid>ecs.n1.medium</uuid>
+				<cpuNum>2</cpuNum>
+				<memory>4G</memory>
+			</InstanceModel>
+		</InstanceModels>
+
+		<images>
+			<image>ecs.image.ubuntu1404.64</image>
+			<image>ecs.image.ubuntu1404.32</image>
+			<image>ecs.image.centos5u8.64</image>
+		</images>
+
+
+
+		<!-- 在前端，是所有身份信息的并集。此处定义此云厂商定义身份所需要的最小集，在java处理时，只把此项传到agent -->
+		<accountInfos>
+			<accountInfo>accessKeyID</accountInfo>
+			<accountInfo>accessKeyKey</accountInfo>
+		</accountInfos>
+	</pubCloud>
+	<pubCloud>
+		<name>EC2</name>
+		<!-- 配置模板根据云厂商提供的方式进行填写。如云厂商没有提供模板，则InstanceModel为空。若提供，则分别填上，然后在agent端进行匹配转换为云商的模板 -->
+		<InstanceModels>
+			<InstanceModel>
+				<uuid>21</uuid>    <!-- uuid请确保不同的配置模板不同ID -->
+				<cpuNum>2</cpuNum>
+				<memory>8G</memory>
+			</InstanceModel>
+		</InstanceModels>
+		<!-- 在前端，是所有身份信息的并集。此处定义此云厂商定义身份所需要的最小集，在java处理时，只把此项传到agent -->
+		<accountInfos>
+			<accountInfo>token</accountInfo>
+		</accountInfos>
+	</pubCloud>
+
+	<pubCloud>
+		<name>Docker</name>
+		<!-- 配置模板根据云厂商提供的方式进行填写。如云厂商没有提供模板，则InstanceModel为空。若提供，则分别填上，然后在agent端进行匹配转换为云商的模板 -->
+		<InstanceModels>
+			<InstanceModel>
+				<uuid>31</uuid>    <!-- uuid请确保不同的配置模板不同ID -->
+				<cpuNum>4</cpuNum>
+				<memory>8G</memory>
+			</InstanceModel>
+		</InstanceModels>
+		<!-- 在前端，是所有身份信息的并集。此处定义此云厂商定义身份所需要的最小集，在java处理时，只把此项传到agent -->
+		<accountInfos>
+			<accountInfo>passwor</accountInfo>
+		</accountInfos>
+	</pubCloud>
+</pubClouds>

@@ -65,6 +65,8 @@ import org.zstack.utils.function.ForEachFunction;
 import org.zstack.utils.function.Function;
 import org.zstack.utils.gson.JSONObjectUtil;
 import org.zstack.utils.logging.CLogger;
+import org.zstack.header.identity.PubAccountEO;
+import org.zstack.header.identity.PubAccountVO;
 
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
@@ -305,9 +307,7 @@ public class VmInstanceBase extends AbstractVmInstance {
             handle((StartNewCreatedVmInstanceMsg) msg);
         } else if (msg instanceof StartVmInstanceMsg) {
             handle((StartVmInstanceMsg) msg);
-        } else if (msg instanceof StopVmInstanceMsg) {
-            handle((StopVmInstanceMsg) msg);
-        } else if (msg instanceof RebootVmInstanceMsg) {
+        }  else if (msg instanceof RebootVmInstanceMsg) {
             handle((RebootVmInstanceMsg) msg);
         } else if (msg instanceof ChangeVmStateMsg) {
             handle((ChangeVmStateMsg) msg);
@@ -1535,45 +1535,45 @@ public class VmInstanceBase extends AbstractVmInstance {
         });
     }
 
-    private void handle(final StopVmInstanceMsg msg) {
-        thdf.chainSubmit(new ChainTask(msg) {
-            @Override
-            public String getName() {
-                return String.format("stop-vm-%s", self.getUuid());
-            }
+//    private void handle(final StopVmInstanceMsg msg) {
+//        thdf.chainSubmit(new ChainTask(msg) {
+//            @Override
+//            public String getName() {
+//                return String.format("stop-vm-%s", self.getUuid());
+//            }
+//
+//            @Override
+//            public String getSyncSignature() {
+//                return syncThreadName;
+//            }
+//
+//            @Override
+//            public void run(SyncTaskChain chain) {
+//                stopVm(msg, chain);
+//            }
+//        });
+//    }
 
-            @Override
-            public String getSyncSignature() {
-                return syncThreadName;
-            }
-
-            @Override
-            public void run(SyncTaskChain chain) {
-                stopVm(msg, chain);
-            }
-        });
-    }
-
-    private void stopVm(final StopVmInstanceMsg msg, final SyncTaskChain chain) {
-        stopVm(msg, new Completion(chain) {
-            @Override
-            public void success() {
-                StopVmInstanceReply reply = new StopVmInstanceReply();
-                VmInstanceInventory inv = VmInstanceInventory.valueOf(self);
-                reply.setInventory(inv);
-                bus.reply(msg, reply);
-                chain.next();
-            }
-
-            @Override
-            public void fail(ErrorCode errorCode) {
-                StopVmInstanceReply reply = new StopVmInstanceReply();
-                reply.setError(errf.instantiateErrorCode(VmErrors.STOP_ERROR, errorCode));
-                bus.reply(msg, reply);
-                chain.next();
-            }
-        });
-    }
+//    private void stopVm(final StopVmInstanceMsg msg, final SyncTaskChain chain) {
+//        stopVm(msg, new Completion(chain) {
+//            @Override
+//            public void success() {
+//                StopVmInstanceReply reply = new StopVmInstanceReply();
+//                VmInstanceInventory inv = VmInstanceInventory.valueOf(self);
+//                reply.setInventory(inv);
+//                bus.reply(msg, reply);
+//                chain.next();
+//            }
+//
+//            @Override
+//            public void fail(ErrorCode errorCode) {
+//                StopVmInstanceReply reply = new StopVmInstanceReply();
+//                reply.setError(errf.instantiateErrorCode(VmErrors.STOP_ERROR, errorCode));
+//                bus.reply(msg, reply);
+//                chain.next();
+//            }
+//        });
+//    }
 
     private void handle(final StartVmInstanceMsg msg) {
         thdf.chainSubmit(new ChainTask(msg) {

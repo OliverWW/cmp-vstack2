@@ -314,6 +314,8 @@ public class DatabaseFacadeImpl implements DatabaseFacade, Component {
                 q.setParameter("id", ids.iterator().next());
                 q.setParameter("date", new Timestamp(new Date().getTime()).toString());
                 q.executeUpdate();
+                
+                
             } else {
                 String sql = String.format("update %s eo set eo.%s = (:date) where eo.%s in (:ids)", eoClass.getSimpleName(), eoSoftDeleteColumn.getName(), eoPrimaryKeyField.getName());
                 Query q = getEntityManager().createQuery(sql);
@@ -354,6 +356,14 @@ public class DatabaseFacadeImpl implements DatabaseFacade, Component {
             }
             fireHardDeleteExtension(ids);
         }
+        
+        private void clearDB(Class entityClass) {
+                String sql = String.format("truncate table "+entityClass.getName());
+                Query q = getEntityManager().createQuery(sql);
+                q.executeUpdate();
+        }
+        
+       
 
         @Transactional
         private void nativeSqlDelete(Collection ids) {
@@ -834,4 +844,40 @@ public class DatabaseFacadeImpl implements DatabaseFacade, Component {
 
         info.fireLifeCycleEvent(evt, entity);
     }
+
+	
+
+	@Override
+	public void clearDB(Class entityClass) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	@Transactional
+	public void removeByColumName(Class entityClass, String name, String value) {
+		// TODO Auto-generated method stub
+		String sql = String.format("delete from %s where %s = '%s'", entityClass.getSimpleName(),name,value);
+        Query q = getEntityManager().createQuery(sql);
+        q.executeUpdate();
+       
+	}
+	
+
+	@Override
+	public <T> T findByColumName(Class entityClass, String name, String value) {
+		// TODO Auto-generated method stub
+       return (T) listByColumName(entityClass,name,value).get(0);
+	}
+	
+	@Override
+	@Transactional
+	public <T> List<T> listByColumName(Class entityClass, String name, String value) {
+		// TODO Auto-generated method stub
+		String sql = String.format("select u from %s u where u.%s = :value", entityClass.getSimpleName(),name,value);
+        Query q = getEntityManager().createQuery(sql);
+        q.setParameter("value", value);  
+        return q.getResultList();
+       
+	}
 }

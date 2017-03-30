@@ -37,12 +37,14 @@ import org.zstack.header.message.APIParam;
 import org.zstack.header.message.Message;
 import org.zstack.header.search.APIGetMessage;
 import org.zstack.header.search.APISearchMessage;
+import org.zstack.header.zone.ZoneVO;
 import org.zstack.utils.*;
 import org.zstack.utils.function.ForEachFunction;
 import org.zstack.utils.gson.JSONObjectUtil;
 import org.zstack.utils.logging.CLogger;
 import org.zstack.utils.path.PathUtil;
 
+import javax.persistence.Column;
 import javax.persistence.Query;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
@@ -80,7 +82,8 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
     private List<String> resourceTypeForAccountRef;
     private List<Class> resourceTypes;
     private Map<String, SessionInventory> sessions = new ConcurrentHashMap<>();
-    private Map<Class, Quota> messageQuotaMap = new HashMap<>();
+    private Map<Class, List<Quota>> messageQuotaMap = new HashMap<>();
+    private Map<String, Quota> nameQuotaMap = new HashMap<>();
     private HashSet<Class> accountApiControl = new HashSet<>();
     private HashSet<Class> accountApiControlInternal = new HashSet<>();
     private List<Quota> definedQuotas = new ArrayList<>();
@@ -123,7 +126,7 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
     }
 
     @Override
-    public Map<Class, Quota> getMessageQuotaMap() {
+    public Map<Class, List<Quota>> getMessageQuotaMap() {
         return messageQuotaMap;
     }
 
@@ -199,9 +202,11 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
         }
 
         List<String> quotas = new ArrayList<>();
-        for (Quota q : messageQuotaMap.values()) {
-            for (QuotaPair p : q.getQuotaPairs()) {
-                quotas.add(String.format("%s        %s", p.getName(), p.getValue()));
+        for (List<Quota> quotaList : messageQuotaMap.values()) {
+            for (Quota q : quotaList) {
+                for (QuotaPair p : q.getQuotaPairs()) {
+                    quotas.add(String.format("%s        %s", p.getName(), p.getValue()));
+                }
             }
         }
 
@@ -242,21 +247,28 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
     }
 
     private void passThrough(AccountMessage msg) {
-        AccountVO vo = dbf.findByUuid(msg.getAccountUuid(), AccountVO.class);
-        if (vo == null) {
+        AccountVO accvo = dbf.findByUuid(msg.getAccountUuid(), AccountVO.class);
+        PubAccountVO pubaccvo = dbf.findByUuid(msg.getAccountUuid(), PubAccountVO.class);
+        if (accvo == null && pubaccvo == null) {
             String err = String.format("unable to find account[uuid=%s]", msg.getAccountUuid());
             bus.replyErrorByMessageType((Message) msg, errf.instantiateErrorCode(SysErrors.RESOURCE_NOT_FOUND, err));
             return;
+        }else if (accvo != null){
+        	 AccountBase base = new AccountBase(accvo);
+             base.handleMessage((Message) msg);
+        }else {
+        	 AccountBase base = new AccountBase(pubaccvo);
+             base.handleMessage((Message) msg);
         }
-
-        AccountBase base = new AccountBase(vo);
-        base.handleMessage((Message) msg);
+       
     }
 
     private void handleApiMessage(APIMessage msg) {
         if (msg instanceof APICreateAccountMsg) {
             handle((APICreateAccountMsg) msg);
-        } else if (msg instanceof APIListAccountMsg) {
+        }else if (msg instanceof APICreatePubAccountMsg) {
+            handle((APICreatePubAccountMsg) msg);
+        }   else if (msg instanceof APIListAccountMsg) {
             handle((APIListAccountMsg) msg);
         } else if (msg instanceof APIListUserMsg) {
             handle((APIListUserMsg) msg);
@@ -508,6 +520,36 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
         reply.setInventories(invs);
         bus.reply(msg, reply);
     }
+    
+    @Transactional
+    private void handle(APICreatePubAccountMsg msg) {
+    	
+    	PubAccountEO vo = new PubAccountEO();
+        if (msg.getResourceUuid() != null) {
+            vo.setUuid(msg.getResourceUuid());
+        } else {
+            vo.setUuid(Platform.getUuid());
+        }
+        vo.setUsername(msg.getUsername()); 
+        vo.setDescription(msg.getDescription());
+        vo.setCloudType(msg.getCloudType());
+        vo.setPassword(msg.getPassword());
+        vo.setAccesskeyID(msg.getAccesskeyID());
+        vo.setAccesskeyKey(msg.getAccesskeyKey());
+        vo.setToken(msg.getToken());
+        dbf.getEntityManager().persist(vo);
+        APICreatePubAccountEvent evt = new APICreatePubAccountEvent(msg.getId());
+        PubAccountInventory inv = new PubAccountInventory();
+        inv.setAccesskeyID(msg.getAccesskeyID());
+        inv.setUsername(msg.getUsername()); 
+        inv.setDescription(msg.getDescription());
+        inv.setCloudType( msg.getCloudType());
+        inv.setAccesskeyID(msg.getAccesskeyID());
+        inv.setAccesskeyKey(msg.getAccesskeyKey());
+        inv.setToken(msg.getToken());
+        evt.setInventory(inv);
+        bus.publish(evt);
+    }
 
     @Transactional
     private void handle(APICreateAccountMsg msg) {
@@ -718,6 +760,7 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
     private void collectDefaultQuota() {
         Map<String, Long> defaultQuota = new HashMap<>();
 
+        // Add quota and quota checker
         for (ReportQuotaExtensionPoint ext : pluginRgty.getExtensionList(ReportQuotaExtensionPoint.class)) {
             List<Quota> quotas = ext.reportQuota();
             DebugUtils.Assert(quotas != null, String.format("%s.getQuotaPairs() returns null", ext.getClass()));
@@ -725,7 +768,8 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
             definedQuotas.addAll(quotas);
 
             for (Quota quota : quotas) {
-                DebugUtils.Assert(quota.getQuotaPairs() != null, String.format("%s reports a quota containing a null quotaPairs", ext.getClass()));
+                DebugUtils.Assert(quota.getQuotaPairs() != null,
+                        String.format("%s reports a quota containing a null quotaPairs", ext.getClass()));
 
                 for (QuotaPair p : quota.getQuotaPairs()) {
                     if (defaultQuota.containsKey(p.getName())) {
@@ -733,14 +777,44 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
                     }
 
                     defaultQuota.put(p.getName(), p.getValue());
+                    nameQuotaMap.put(p.getName(), quota);
                 }
 
                 for (Class clz : quota.getMessagesNeedValidation()) {
-                    messageQuotaMap.put(clz, quota);
+                    if (messageQuotaMap.containsKey(clz)) {
+                        messageQuotaMap.get(clz).add(quota);
+                    } else {
+                        ArrayList<Quota> quotaArrayList = new ArrayList<>();
+                        quotaArrayList.add(quota);
+                        messageQuotaMap.put(clz, quotaArrayList);
+                    }
+
                 }
             }
         }
 
+        // Add additional quota checker to quota
+        for (RegisterQuotaCheckerExtensionPoint ext : pluginRgty.getExtensionList(RegisterQuotaCheckerExtensionPoint.class)) {
+            Map<String, Set<Quota.QuotaValidator>> m = ext.registerQuotaValidator();
+            for (Map.Entry<String, Set<Quota.QuotaValidator>> entry : m.entrySet()) {
+                Quota quota = nameQuotaMap.get(entry.getKey());
+                quota.addQuotaValidators(entry.getValue());
+                for (Quota.QuotaValidator q : entry.getValue()) {
+                    for (Class clz : q.getMessagesNeedValidation()) {
+                        if (messageQuotaMap.containsKey(clz)) {
+                            messageQuotaMap.get(clz).add(quota);
+                        } else {
+                            ArrayList<Quota> quotaArrayList = new ArrayList<>();
+                            quotaArrayList.add(quota);
+                            messageQuotaMap.put(clz, quotaArrayList);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        // complete default quota
         SimpleQuery<GlobalConfigVO> q = dbf.createQuery(GlobalConfigVO.class);
         q.select(GlobalConfigVO_.name);
         q.add(GlobalConfigVO_.category, Op.EQ, AccountConstant.QUOTA_GLOBAL_CONFIG_CATETORY);
@@ -771,6 +845,7 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
             dbf.persistCollection(quotaConfigs);
         }
 
+        //
         repairAccountQuota(defaultQuota);
     }
 
@@ -963,7 +1038,7 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
         q.setParameter("auuid", accountUuid);
         List<AccountType> types = q.getResultList();
         if (types.isEmpty()) {
-            throw new OperationFailureException(errf.stringToInvalidArgumentError(
+            throw new OperationFailureException(errf.stringToInvalidArgumentError(	
                     String.format("cannot find the account[uuid:%s]", accountUuid)
             ));
         }
@@ -1413,11 +1488,43 @@ public class AccountManagerImpl extends AbstractService implements AccountManage
             validate((APILogInByUserMsg) msg);
         } else if (msg instanceof APIGetAccountQuotaUsageMsg) {
             validate((APIGetAccountQuotaUsageMsg) msg);
+        } else if (msg instanceof APIChangeResourceOwnerMsg) {
+            validate((APIChangeResourceOwnerMsg) msg);
         }
 
         setServiceId(msg);
 
         return msg;
+    }
+
+    private void validate(APIChangeResourceOwnerMsg msg) {
+        for (Quota quota : messageQuotaMap.get(APIChangeResourceOwnerMsg.class)) {
+            // make quota pairs
+            List<String> names = new ArrayList<>();
+            for (QuotaPair p : quota.getQuotaPairs()) {
+                names.add(p.getName());
+            }
+
+            SimpleQuery<QuotaVO> q = dbf.createQuery(QuotaVO.class);
+            q.select(QuotaVO_.name, QuotaVO_.value);
+            q.add(QuotaVO_.identityType, Op.EQ, AccountVO.class.getSimpleName());
+            q.add(QuotaVO_.identityUuid, Op.EQ, msg.getAccountUuid());
+            q.add(QuotaVO_.name, Op.IN, names);
+            List<Tuple> ts = q.listTuple();
+
+            Map<String, QuotaPair> pairs = new HashMap<>();
+            for (Tuple t : ts) {
+                String name = t.get(0, String.class);
+                long value = t.get(1, Long.class);
+                QuotaPair p = new QuotaPair();
+                p.setName(name);
+                p.setValue(value);
+                pairs.put(name, p);
+            }
+
+            // check quota
+            quota.getOperator().checkQuota(msg, pairs);
+        }
     }
 
     private void validate(APIGetAccountQuotaUsageMsg msg) {

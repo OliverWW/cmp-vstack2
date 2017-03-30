@@ -60,9 +60,13 @@ public class AccountBase extends AbstractAccount {
     private EventFacade evtf;
 
     private AccountVO vo;
+    private PubAccountVO pubvo;
 
     public AccountBase(AccountVO vo) {
         this.vo = vo;
+    }
+    public AccountBase(PubAccountVO pubvo) {
+        this.pubvo = pubvo;
     }
 
     @Override
@@ -101,6 +105,25 @@ public class AccountBase extends AbstractAccount {
         }
     }
 
+    
+    
+    
+    private void handle(final APIDeletePubAccountMsg msg) {
+    	 final APIDeletePubAccountEvent evt = new APIDeletePubAccountEvent(msg.getId());
+
+         final PubAccountVO vo = dbf.findByUuid(msg.getUuid(), PubAccountVO.class);
+         if (vo == null) {
+             bus.publish(evt);
+             return;
+         }
+         bus.publish(evt);
+         AccountDeletedData evtData = new AccountDeletedData();
+         evtData.setAccountUuid(vo.getUuid());
+         evtData.setPubinventory(PubAccountInventory.valueOf(vo));
+         evtf.fire(IdentityCanonicalEvents.ACCOUNT_DELETED_PATH, evtData);
+             
+    	
+    }
 
     private void handle(final APIDeleteAccountMsg msg) {
         final APIDeleteAccountEvent evt = new APIDeleteAccountEvent(msg.getId());
@@ -271,6 +294,8 @@ public class AccountBase extends AbstractAccount {
             handle((APIUpdateQuotaMsg) msg);
         } else if (msg instanceof APIDeleteAccountMsg) {
             handle((APIDeleteAccountMsg) msg);
+        } else if (msg instanceof APIDeletePubAccountMsg) {
+            handle((APIDeletePubAccountMsg) msg);
         } else if (msg instanceof APIGetAccountQuotaUsageMsg) {
             handle((APIGetAccountQuotaUsageMsg) msg);
         } else if (msg instanceof APIAttachPoliciesToUserMsg) {
