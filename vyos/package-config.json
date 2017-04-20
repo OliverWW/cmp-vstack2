@@ -1,0 +1,15 @@
+{
+    "projects": {
+        "zvr": {
+            "dir": "target/pkg-zvr",
+            "installer": "scripts/install-zvr.sh",
+            "location": "target/"
+	},
+
+        "zvrboot": {
+            "dir": "target/pkg-zvrboot",
+            "installer": "scripts/install-zvrboot.sh",
+            "location": "target/"
+	}
+    }
+}
