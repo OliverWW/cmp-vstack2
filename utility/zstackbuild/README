@@ -1,0 +1,43 @@
+Preparation:
+-------------
+ant is required to be installed. 
+
+Build zstack.war:
+-------------
+#ant build-war
+
+Build zstack-woodpecker testing libs and config files:
+-------------
+#ant build-woodpecker
+
+Build all:
+-------------
+#ant all
+
+Build all-in-one package with special build name, e.g. rc1 :
+-------------
+#ant -Dzstack_build_root=/root/zstackorg/ -Dbuild.num=rc1 all-in-one
+
+Build all-in-one package with special build name, e.g. rc1 :
+-------------
+#ant -Dzstack_build_root=/root/zstackorg/ -Dbuild.num=rc1 -Dbin.version=1.0.1-rc1 all-in-one
+
+Build all-in-one offline binary installer for CentOS6 (need to install figlet):
+-------------
+#ant -Dzstack_build_root=/root/zstackorg/ offline-centos6
+
+Build all-in-one offline binary installer for CentOS7 (need to install figlet):
+-------------
+#ant -Dzstack_build_root=/root/zstackorg/ offline-centos7
+
+Build all-in-one offline binary installer for CentOS6 and CentOS7 (need to install figlet):
+-------------
+#ant -Dzstack_build_root=/root/zstackorg/ offline-centos-all
+
+Build all-in-one offline binary installer for CentOS6 and CentOS7, with specific branch version:
+#ant -Dzstack_build_root=/root/zstackorg/ -Dzstackdashboard.build_version=master  offline-centos-all
+
+Build all-in-one package with 1.2.x branch
+-------------
+#ant -Dzstack_build_root=/root/zstackorg/ -Dzstack.build_version=1.2.x -Dzstack-utiltiy.build_version=1.2.x -Dzstackdashboard.build_version=master all-in-one
+
