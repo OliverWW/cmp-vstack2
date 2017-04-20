@@ -1,0 +1,68 @@
+<div kendo-window="addIpRange__" k-options="optionsAddIpRange__" k-visible="false">
+    <div>
+        <h4 class="z-win-h4">{{"l3Network.addIpRange.ADD IP RANGE" | translate}}</h4>
+        <form class="form">
+            <div class="form-group col-sm-18">
+                <label for="iprangeName">{{"l3Network.addIpRange.NAME" | translate}}</label>
+                <input class="form-control" type="text" id="ipRangeName" placeholder="(Required) max of 255 characters" ng-model="info.name">
+            </div>
+            <div class="form-group col-sm-18">
+                <label for="idesc">{{"l3Network.addIpRange.DESCRIPTION" | translate}}</label>
+                <textarea  class="form-control" rows="5" id="idesc" placeholder="(Optional) max length of 2048 characters" ng-model="info.description"></textarea>
+            </div>
+            <div class="form-group col-sm-18">
+                <label for="method">{{"l3Network.addIpRange.METHOD" | translate}}</label>
+                <select id="method" kendo-drop-down-list k-options="methodOptions__" class="z-win-dropdown" ng-model="info.method"></select>
+                <p class="z-hint">{{"l3Network.addIpRange.Choose using CIDR or IP range" | translate}}</p>
+            </div>
+
+            <div ng-switch="info.method">
+                <div ng-switch-when="range">
+                    <div class="form-group col-sm-18">
+                        <label for="sip">{{"l3Network.addIpRange.START IP" | translate}}</label>
+                        <input class="form-control" type="text" id="sip" placeholder="(Required) IP range start" ng-model="info.startIp">
+                        <div class="alert alert-danger col-sm-18" ng-show="!isStartIpValid()">
+                            {{"l3Network.addIpRange.Not a valid IPv4 address" | translate}}
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-18">
+                        <label for="eip">{{"l3Network.addIpRange.END IP" | translate}}</label>
+                        <input class="form-control" type="text" id="eip" placeholder="(Required) IP range end" ng-model="info.endIp">
+                        <div class="alert alert-danger col-sm-18" ng-show="!isEndIpValid()">
+                            {{"l3Network.addIpRange.Not a valid IPv4 address" | translate}}
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-18">
+                        <label for="netmask">{{"l3Network.addIpRange.NETMASK" | translate}}</label>
+                        <input class="form-control" type="text" id="netmask" placeholder="(Required) netmask" ng-model="info.netmask">
+                        <div class="alert alert-danger col-sm-18" ng-show="!isNetmaskValid()">
+                            {{"l3Network.addIpRange.Not a valid netmask" | translate}}
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-18">
+                        <label for="gateway">{{"l3Network.addIpRange.GATEWAY" | translate}}</label>
+                        <input class="form-control" type="text" id="gateway" placeholder="(Required) gateway" ng-model="info.gateway">
+                        <div class="alert alert-danger col-sm-18" ng-show="!isGatewayValid()">
+                            {{"l3Network.addIpRange.Not a valid IPv4 address" | translate}}
+                        </div>
+                    </div>
+                </div>
+                <div ng-switch-when="cidr">
+                    <div class="form-group col-sm-18">
+                        <label for="cidr">{{"l3Network.addIpRange.NETWORK CIDR" | translate}}</label>
+                        <input class="form-control" type="text" id="cidr" placeholder="(Required) for example, 10.0.0.0/24" ng-model="info.cidr">
+                        <div class="alert alert-danger col-sm-18" ng-show="!isNetworkCidrValid()">
+                            {{"l3Network.addIpRange.HINT" | translate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group col-lg-18">
+                <button type="button" class="btn btn-default" ng-click="cancel()">{{"l3Network.addIpRange.Cancel" | translate}}</button>
+                <button type="button" class="btn btn-primary" ng-disabled="!canProceed()" ng-click="done()">{{"l3Network.addIpRange.Add" | translate}}</button>
+            </div>
+        </form>
+    </div>
+</div>

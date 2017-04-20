@@ -1,0 +1,164 @@
+<div kendo-window="winCreateBackupStorage__" k-visible="false" k-options="winCreateBackupStorageOptions__">
+    <div class="row">
+        <div class="col-sm-15">
+            <div class="tab-content">
+                <div id="createBackupStorageInfo" class="tab-pane active">
+                    <h4 class="z-win-h4">{{ "backupStorage.createBackupStorage.CREATE BACKUP STORAGE" | translate }}</h4>
+                    <form class="form" id="formCreate">
+                        <div class="form-group col-sm-21">
+                            <label for="name">{{ "backupStorage.createBackupStorage.NAME" | translate }}</label>
+                            <input class="form-control" type="text" id="name" placeholder="(Required) max length of 255 characters" ng-model="infoPage.name" required data-message="name is required">
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="description">{{ "backupStorage.createBackupStorage.DESCRIPTION" | translate }}</label>
+                            <textarea  class="form-control" rows="5" id="description" placeholder="(Optional) max length of 2048 characters" ng-model="infoPage.description"></textarea>
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <label for="type">{{ "backupStorage.createBackupStorage.TYPE" | translate }}</label>
+                            <select id="type" kendo-drop-down-list k-options="typeList" class="z-win-dropdown" ng-model="infoPage.type"></select>
+                            <p class="z-hint">{{ "backupStorage.createBackupStorage.HINT1" | translate }}</p>
+                        </div>
+                        <div class="form-group col-sm-21" ng-show="infoPage.type != 'Ceph' && infoPage.type != 'SS100-Storage' && infoPage.type != 'Fusionstor'">
+                            <label for="url" class="z-block-label">{{ "backupStorage.createBackupStorage.URL" | translate }}</label>
+                            <input id="url" type="text" ng-model="infoPage.url" class="form-control" placeholder="(Required) Url of backup storage">
+                            <p class="z-hint">{{ "backupStorage.createBackupStorage.HINT2" | translate }}</p>
+                            <div class="alert alert-danger col-sm-21" ng-show="!infoPage.isUrlValid()">
+                                {{ "backupStorage.createBackupStorage.ALERT1" | translate }}
+                            </div>
+                        </div>
+                        <div ng-switch="infoPage.type">
+                            <div ng-switch-when="SftpBackupStorage">
+                                <div class="form-group col-sm-21">
+                                    <label for="hostname">{{ "backupStorage.createBackupStorage.HOSTNAME" | translate }}</label>
+                                    <input type="text" class="form-control" id="hostname" placeholder="IP or DNS name of sftp server" ng-model="infoPage.hostname">
+                                </div>
+                                <div class="form-group col-sm-21">
+                                    <label for="port">{{ "backupStorage.createBackupStorage.SSH Port" | translate }}</label>
+                                    <input type="text" class="form-control" id="port" placeholder="22" ng-model="infoPage.port">
+                                </div>
+                                <div class="form-group col-sm-21">
+                                    <label for="username">{{ "backupStorage.createBackupStorage.USER NAME" | translate }}</label>
+                                    <input type="text" class="form-control" id="username" placeholder="ssh user name of sftp server" ng-model="infoPage.username">
+                                    <p class="z-hint">{{ "backupStorage.createBackupStorage.HINT3" | translate }}</p>
+                                </div>
+                                <div class="form-group col-sm-21">
+                                    <label for="password">{{ "backupStorage.createBackupStorage.PASSWORD" | translate }}</label>
+                                    <input type="password" class="form-control" id="password" placeholder="ssh password of sftp server" ng-model="infoPage.password">
+                                </div>
+                            </div>
+
+                            <div ng-switch-when="Ceph">
+                              <div class="form-group col-sm-21">
+                                <label for="cephhostname">{{ "backupStorage.createBackupStorage.HOSTNAME" | translate }}</label>
+                                <input type="text" class="form-control" id="cephhostname" placeholder="IP or DNS name of ceph mon server" ng-model="infoPage.hostname">
+                              </div>
+                              <div class="form-group col-sm-21">
+                                <label for="cephusername">{{ "backupStorage.createBackupStorage.USER NAME" | translate }}</label>
+                                <input type="text" class="form-control" id="cephusername" placeholder="ssh user name of ceph mon server" ng-model="infoPage.username">
+                                <p class="z-hint">{{ "backupStorage.createBackupStorage.HINT4" | translate }}</p>
+                              </div>
+                              <div class="form-group col-sm-21">
+                                <label for="cephpassword">{{ "backupStorage.createBackupStorage.PASSWORD" | translate }}</label>
+                                <input type="password" class="form-control" id="cephpassword" placeholder="ssh password of ceph mon server" ng-model="infoPage.password">
+                              </div>
+                              <div class="form-group col-sm-24">
+                                <button type="button" class="btn btn-default" ng-click="infoPage.addCephMon()" ng-disabled="!infoPage.canAddMon()">
+                                  <i class="fa fa-plus" style="font-size: 1.2em"></i>
+                                  <span>{{ "backupStorage.createBackupStorage.Add" | translate }}</span>
+                                </button>
+                                <span class="z-hint">{{ "backupStorage.createBackupStorage.HINT5" | translate }}</span>
+                              </div>
+                              <div class="form-group col-sm-24">
+                                <div kendo-grid k-options="cephMonGrid__"></div>
+                              </div>
+                            </div>
+
+                            <div ng-switch-when="SS100-Storage">
+                              <div class="form-group col-sm-21">
+                                <label for="fusionstorhostname">{{ "backupStorage.createBackupStorage.HOSTNAME" | translate }}</label>
+                                <input type="text" class="form-control" id="fusionstorhostname" placeholder="IP or DNS name of SS100-Storage mon server" ng-model="infoPage.hostname">
+                              </div>
+                              <div class="form-group col-sm-21">
+                                <label for="fusionstorusername">{{ "backupStorage.createBackupStorage.USER NAME" | translate }}</label>
+                                <input type="text" class="form-control" id="fusionstorusername" placeholder="ssh user name of SS100-Storage mon server" ng-model="infoPage.username">
+                                <p class="z-hint">{{ "backupStorage.createBackupStorage.HINT7" | translate }}</p>
+                              </div>
+                              <div class="form-group col-sm-21">
+                                <label for="fusionstorpassword">{{ "backupStorage.createBackupStorage.PASSWORD" | translate }}</label>
+                                <input type="password" class="form-control" id="fusionstorpassword" placeholder="ssh password of SS100-Storage mon server" ng-model="infoPage.password">
+                              </div>
+                              <div class="form-group col-sm-24">
+                                <button type="button" class="btn btn-default" ng-click="infoPage.addFusionstorMon()" ng-disabled="!infoPage.canAddMon()">
+                                  <i class="fa fa-plus" style="font-size: 1.2em"></i>
+                                  <span>{{ "backupStorage.createBackupStorage.Add" | translate }}</span>
+                                </button>
+                                <span class="z-hint">{{ "backupStorage.createBackupStorage.HINT8" | translate }}</span>
+                              </div>
+                              <div class="form-group col-sm-24">
+                                <div kendo-grid k-options="fusionstorMonGrid__"></div>
+                              </div>
+                            </div>
+
+                            <div ng-switch-when="Fusionstor">
+                              <div class="form-group col-sm-21">
+                                <label for="fusionstorhostname">{{ "backupStorage.createBackupStorage.HOSTNAME" | translate }}</label>
+                                <input type="text" class="form-control" id="fusionstorhostname" placeholder="IP or DNS name of Fusionstor mon server" ng-model="infoPage.hostname">
+                              </div>
+                              <div class="form-group col-sm-21">
+                                <label for="fusionstorusername">{{ "backupStorage.createBackupStorage.USER NAME" | translate }}</label>
+                                <input type="text" class="form-control" id="fusionstorusername" placeholder="ssh user name of Fusionstor mon server" ng-model="infoPage.username">
+                                <p class="z-hint">{{ "backupStorage.createBackupStorage.HINT9" | translate }}</p>
+                              </div>
+                              <div class="form-group col-sm-21">
+                                <label for="fusionstorpassword">{{ "backupStorage.createBackupStorage.PASSWORD" | translate }}</label>
+                                <input type="password" class="form-control" id="fusionstorpassword" placeholder="ssh password of Fusionstor mon server" ng-model="infoPage.password">
+                              </div>
+                              <div class="form-group col-sm-24">
+                                <button type="button" class="btn btn-default" ng-click="infoPage.addFusionstorMon()" ng-disabled="!infoPage.canAddMon()">
+                                  <i class="fa fa-plus" style="font-size: 1.2em"></i>
+                                  <span>{{ "backupStorage.createBackupStorage.Add" | translate }}</span>
+                                </button>
+                                <span class="z-hint">{{ "backupStorage.createBackupStorage.HINT10" | translate }}</span>
+                              </div>
+                              <div class="form-group col-sm-24">
+                                <div kendo-grid k-options="fusionstorMonGrid__"></div>
+                              </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+                <div id="createBackupStorageZone" class="tab-pane">
+                    <div class="alert alert-warning col-sm-21" ng-show="!zonePage.hasZone()">
+                        {{ "backupStorage.createBackupStorage.ALERT2" | translate }}
+                    </div>
+
+                    <h4 class="z-win-h4">{{ "backupStorage.createBackupStorage.ATTACH ZONE" | translate }}</h4>
+                    <form class="form">
+                        <div class="form-group col-sm-18">
+                            <label for="ps">{{ "backupStorage.createBackupStorage.ZONE" | translate }}</label>
+                            <select id="ps" kendo-multi-select="zoneList__" k-options="zoneListOptions__" class="z-win-dropdown"></select>
+                            <p class="z-hint">{{ "backupStorage.createBackupStorage.HINT6" | translate }}</p>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="form-group col-sm-21">
+                    <button type="button" class="btn btn-default" ng-click="button.previousClick()" ng-disabled="!button.canPreviousProceed()">{{ "backupStorage.createBackupStorage.Previous" | translate }}</button>
+                    <button type="button" class="btn btn-primary" ng-disabled="!button.canNextProceed()" ng-click="button.nextClick()">{{button.nextButtonName()}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-7">
+            <div class="z-wizard-bar">
+                <ul class="nav">
+                    <li class="active"><a data-target="#createBackupStorageInfo" ng-click="button.pageClick('createBackupStorageInfo')">{{ "backupStorage.createBackupStorage.BACKUP STORAGE INFO" | translate }}</a></li>
+                    <li ng-class="{disabled: !psPage.isActive()}"><a data-target="#createBackupStorageZone" ng-click="button.pageClick('createBackupStorageZone')">{{ "backupStorage.createBackupStorage.ATTACH ZONE" | translate }}</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>

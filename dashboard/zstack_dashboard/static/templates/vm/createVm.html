@@ -1,0 +1,121 @@
+<div kendo-window="winCreateVmInstance__" k-visible="false" k-options="winCreateVmInstanceOptions__">
+    <div class="row">
+        <div class="col-sm-15">
+            <div class="tab-content">
+                <div id="createVmInstanceInfo" class="tab-pane active">
+                    <div class="alert alert-warning col-sm-21" ng-show="!infoPage.hasImage()">
+                        {{"vm.createVm.hasImage()" | translate}}
+                    </div>
+                    <div class="alert alert-warning col-sm-21" ng-show="!infoPage.hasInstanceOffering()">
+                        {{"vm.createVm.hasInstanceOffering()" | translate}}
+                    </div>
+
+                    <h4 class="z-win-h4">{{"vm.createVm.VM INSTANCE INFO" | translate}}</h4>
+                    <form class="form">
+                        <div class="form-group col-sm-24">
+                            <label for="instOffering">{{"vm.createVm.INSTANCE OFFERING" | translate}}</label>
+                            <select id="instOffering" kendo-drop-down-list k-options="instanceOfferingOptions__" class="z-win-dropdown" ng-model="infoPage.instanceOfferingUuid"></select>
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <label for="image">{{"vm.createVm.IMAGE" | translate}}</label>
+                            <select id="image" kendo-drop-down-list k-options="imageOptions__" class="z-win-dropdown" ng-model="infoPage.imageUuid"></select>
+                        </div>
+                        <div ng-switch="infoPage.imageMediaType">
+                            <div ng-switch-when="ISO">
+                                <div class="form-group col-sm-24">
+                                    <label for="rootDisk">{{"vm.createVm.ROOT VOLUME DISK OFFERING" | translate}}</label>
+                                    <select id="rootDisk" kendo-drop-down-list="rootDiskOfferingList__" k-options="rootDiskOfferingOptions__" class="z-win-dropdown" ng-model="infoPage.rootDiskOfferingUuid"></select>
+                                    <p class="z-hint">{{"vm.createVm.HINT" | translate}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <label for="name">{{"vm.createVm.NAME" | translate}}</label>
+                            <input class="form-control z-win-input" type="text" id="name" placeholder="(Required) max length of 255 characters" ng-model="infoPage.name" required data-message="name is required">
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <label for="hostname">{{"vm.createVm.HOST NAME" | translate}}</label>
+                            <input class="form-control z-win-input" type="text" id="hostname" placeholder="(Optional) hostname on default L3 network" ng-model="infoPage.hostname">
+                            <p class="z-hint">{{"vm.createVm.HINT2" | translate}}</p>
+                        </div>
+                        <div class='form-group col-sm-24' style="height:1px; background-color:#cdcdcd;"></div>
+                        <div class="form-group col-sm-24">
+                            <label for="l3">{{"vm.createVm.L3 NETWORK" | translate}}</label>
+                            <select id="l3" kendo-drop-down-list k-options="l3NetworkOptions__" class="z-win-dropdown" ng-model="infoPage.l3NetworkUuid"></select>
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <label for="l3_ip">{{"vm.createVm.STATIC IP" | translate}}</label>
+                            <input class="form-control z-win-input" type="text" id="l3_ip" placeholder="(Optional)" ng-model="infoPage.l3NetworkIp">
+                            <div class="alert alert-danger col-sm-21" ng-show="!infoPage.isStaticIpValid()">
+                                {{"vm.createVm.isStaticIpValid()" | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <button type="button" class="btn btn-default" ng-click="infoPage.addL3Network()" ng-disabled="!infoPage.isStaticIpValid()">
+                                <i class="fa fa-plus" style="font-size: 1.2em"></i>
+                                <span>{{"vm.createVm.Add" | translate}}</span>
+                            </button>
+                            <span class="z-hint" ng-show="infoPage.l3NetworkUuids.length <= 0">{{"vm.createVm.HINT3" | translate}}</span>
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <div kendo-grid k-options="l3NetworkGrid__"></div>
+                        </div>
+                        <div class="form-group col-sm-24" ng-show="infoPage.l3NetworkUuids.length > 1">
+                            <label for="dl3">{{"vm.createVm.DEFAULT L3 NETWORK" | translate}}</label>
+                            <select id="dl3" kendo-drop-down-list="defaultL3NetworkList__" k-options="defaultL3NetworkOptions__" class="z-win-dropdown" ng-model="infoPage.defaultL3NetworkUuid"></select>
+                            <p class="z-hint">{{"vm.createVm.HINT4" | translate}}</p>
+                        </div>
+                        <div class='form-group col-sm-24' style="height:1px; background-color:#cdcdcd;"></div>
+                        <div class="form-group col-sm-24">
+                            <label for="diskOffering">{{"vm.createVm.DATA DISK OFFERING" | translate}}</label>
+                            <select id="diskOffering" kendo-multi-select="diskOfferingList__" k-options="diskOfferingOptions__" class="z-win-dropdown"></select>
+                            <p class="z-hint">{{"vm.createVm.HINT5" | translate}}</p>
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <label for="description">{{"vm.createVm.DESCRIPTION" | translate}}</label>
+                            <textarea  class="form-control z-win-input" rows="5" id="description" placeholder="(Optional) max length of 2048 characters" ng-model="infoPage.description"></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="createVmInstanceLocation" class="tab-pane">
+                    <h4 class="z-win-h4">{{"vm.createVm.SELECT LOCATION" | translate}}</h4>
+                    <form class="form">
+                        <div class="form-group col-sm-18">
+                            <label for="zone">{{"vm.createVm.ZONE" | translate}}</label>
+                            <select id="zone" kendo-combo-box k-options="zoneOptions__" k-placeholder="'Select Zone'" class="z-win-dropdown" k-ng-model="locationPage.zoneUuid"></select>
+                        </div>
+
+                        <div class="form-group col-sm-18">
+                            <label for="cluster">{{"vm.createVm.CLUSTER" | translate}}</label>
+                            <select id="cluster" kendo-combo-box k-options="clusterOptions__" k-placeholder="'Select Cluster'" class="z-win-dropdown" k-ng-model="locationPage.clusterUuid"></select>
+                        </div>
+
+                        <div class="form-group col-sm-18">
+                            <label for="host">{{"vm.createVm.HOST" | translate}}</label>
+                            <select id="host" kendo-combo-box k-options="hostOptions__" k-placeholder="'Select Host'" class="z-win-dropdown" k-ng-model="locationPage.hostUuid"></select>
+                        </div>
+                    </form>
+
+                    <div class="col-sm-18" style="margin-bottom: 10px">
+                        <span class="z-hint">{{"vm.createVm.HINT6" | translate}}</span>
+                    </div>
+
+                </div>
+
+                <div class="form-group col-sm-18">
+                    <button type="button" class="btn btn-default" ng-click="button.previousClick()" ng-disabled="!button.canPreviousProceed()">{{"vm.createVm.Previous" | translate}}</button>
+                    <button type="button" class="btn btn-primary" ng-disabled="!button.canNextProceed()" ng-click="button.nextClick()">{{button.nextButtonName()}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-7 z-wizard-bar">
+            <ul class="nav">
+                <li class="active"><a data-target="#createVmInstanceInfo" ng-click="button.pageClick('createVmInstanceInfo')">{{"vm.createVm.VM INSTANCE INFO" | translate}}</a></li>
+                <li ng-class="{disabled: !psPage.isActive()}"><a data-target="#createVmInstanceLocation" ng-click="button.pageClick('createVmInstanceLocation')">{{"vm.createVm.LOCATION" | translate}}</a></li>
+            </ul>
+        </div>
+
+    </div>
+</div>

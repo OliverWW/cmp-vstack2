@@ -1,0 +1,63 @@
+<div style="display: none">
+    <div z-create-l2-network="winNewL2Network" z-options="optionsCreateL2Network"></div>
+    <div z-search="search" z-options="optionsSearch"></div>
+    <div z-delete-confirm="deleteL2Network" z-options="optionsDeleteL2Network"></div>
+    <div z-l2-network-attach-cluster="attachCluster" z-options="optionsAttachCluster"></div>
+    <div z-l2-network-detach-cluster="detachCluster" z-options="optionsDetachCluster"></div>
+</div>
+
+<div>
+    <h3 class="z-h3">{{"l2Network.l2Network.L2 NETWORK" | translate}}</h3>
+    <div class="btn-group-sm z-btn-bar">
+        <button type="button" class="btn btn-default btn-sm" ng-click="funcRefresh()">
+            <i class="fa fa-refresh"></i>
+        </button>
+
+        <button type="button" class="btn btn-default btn-sm" ng-click="funcSearch(search)">
+            <i class="fa fa-search"></i>
+        </button>
+
+        <div z-sort-by z-options="optionsSortBy"></div>
+
+        <button z-popover="popoverFilterBy" type="button" id="l2NetworkFilter" z-content-id="l2NetworkFilterContent" class="btn btn-default btn-sm" ng-click="filterBy.open(popoverFilterBy)">
+            <i class="fa fa-filter"></i><span>&nbsp; {{filterBy.getButtonName()}}</span>
+        </button>
+
+        <button type="button" class="btn btn-success btn-sm" style="margin-left: 20px" ng-click="funcCreateL2Network(winNewL2Network)">
+            <i class="fa fa-plus"></i>
+            <span>&nbsp; {{"l2Network.l2Network.New L2 Network" | translate}}</span>
+        </button>
+
+        <div id="l2NetworkFilterContent" style="display: none">
+            <form class="form">
+                <div class="form-group">
+                    <label for="fieldList" class="z-block-label">{{"l2Network.l2Network.FILTER BY" | translate}}</label>
+                    <select id="fieldList" kendo-drop-down-list k-options="filterBy.fieldList" ng-model="filterBy.field"></select>
+                </div>
+                <div class="form-group">
+                    <label class="z-block-label" for="valueList">{{"l2Network.l2Network.VALUE" | translate}}</label>
+                    <select kendo-drop-down-list id="valueList" ng-disabled="filterBy.isValueListDisabled()" k-options="filterBy.valueList" ng-model="filterBy.value"></select>
+                </div>
+                <button type="button" class="btn btn-sm btn-primary" ng-click="filterBy.confirm(popoverFilterBy)">Confirm</button>
+            </form>
+        </div>
+
+        <div class="btn-group" ng-show="funcIsActionShow()">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" ng-disabled="funcIsActionDisabled()">
+                {{"l2Network.l2Network.Action" | translate}} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href ng-click="action.enable()" ng-show="model.current.isEnableShow()">{{"l2Network.l2Network.Enable" | translate}}</a></li>
+                <li><a href ng-click="action.disable()" ng-show="model.current.isDisableShow()">{{"l2Network.l2Network.Disable" | translate}}</a></li>
+                <li><a href ng-click="action.attachCluster()">{{"l2Network.l2Network.Attach Cluster" | translate}}</a></li>
+                <li><a href ng-click="action.detachCluster()">{{"l2Network.l2Network.Detach Cluster" | translate}}</a></li>
+                <li class="divider"></li>
+                <li><a href style="color:red" ng-click="funcDeleteL2Network(deleteL2Network)">{{"l2Network.l2Network.Delete" | translate}}</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div kendo-grid="l2NetworkGrid" k-options="oL2NetworkGrid.options" z-grid-double-click="funcGridDoubleClick" class="z-flat-table"></div>
+    <p class="z-hint">{{"l2Network.l2Network.HINT" | translate}}</p>
+    <p class="z-hint">{{"l2Network.l2Network.HINT2" | translate}}</p>
+</div>

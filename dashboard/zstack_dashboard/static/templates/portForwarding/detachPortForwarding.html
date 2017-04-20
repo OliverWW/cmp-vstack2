@@ -1,0 +1,69 @@
+<div kendo-window="detachPortForwarding__" k-options="optionsDetachPortForwarding__" k-visible="false">
+    <div>
+        <h4 class="z-win-h4">{{"portForwarding.detachPortForwarding.DETACH PORT FORWARDING RULE" | translate}}</h4>
+
+        <table class="table z-table-borderless">
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.VM NAME" | translate}}:</span></td>
+                <td><span class="z-description">{{vm.name}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.VM STATE" | translate}}:</span></td>
+                <td><span class="{{vmStateLabel()}}">{{vm.state}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.VM HYPERVISOR" | translate}}:</span></td>
+                <td><span>{{vm.hypervisorType}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.VIP PORT START" | translate}}:</span></td>
+                <td><span>{{pf.vipPortStart}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.VIP PORT END" | translate}}:</span></td>
+                <td><span>{{pf.vipPortEnd}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.GUEST PORT START" | translate}}:</span></td>
+                <td><span>{{pf.privatePortStart}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.GUEST PORT END" | translate}}:</span></td>
+                <td><span>{{pf.privatePortEnd}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.PROTOCOL" | translate}}:</span></td>
+                <td><span>{{pf.protocolType}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.ALLOWED CIDR" | translate}}:</span></td>
+                <td><span>{{pf.allowedCidr}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.NIC DEVICE ID" | translate}}:</span></td>
+                <td><span>{{vm.nicDeviceId}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.NIC MAC" | translate}}:</span></td>
+                <td><span>{{vm.nicMac}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.NIC IP" | translate}}:</span></td>
+                <td><span>{{vm.nicIp}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.NIC NETMASK" | translate}}:</span></td>
+                <td><span>{{vm.nicNetmask}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{"portForwarding.detachPortForwarding.NIC GATEWAY" | translate}}:</span></td>
+                <td><span>{{vm.nicGateway}}</span></td>
+            </tr>
+        </table>
+
+        <p style="color: red" ng-show="!isVmInCorrectState()">{{"portForwarding.detachPortForwarding.HINT1" | translate}}</p>
+
+        <button type="button" class="btn btn-default" ng-click="cancel()">{{"portForwarding.detachPortForwarding.Cancel" | translate}}</button>
+        <button type="button" class="btn btn-danger" ng-disabled="!canProceed()" ng-click="done()">{{"portForwarding.detachPortForwarding.Detach" | translate}}</button>
+    </div>
+</div>

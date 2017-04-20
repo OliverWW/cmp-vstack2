@@ -1,0 +1,92 @@
+<div kendo-window="winCreateEip__" k-visible="false" k-options="winCreateEipOptions__">
+    <div class="row">
+        <div class="col-sm-15">
+            <div class="tab-content">
+                <div id="createEipVip" class="tab-pane active">
+                    <div class="alert alert-warning col-sm-21" ng-show="!vipPage.hasL3Network() && vipPage.method == 'new'">
+                        {{"eip.createEip.hasL3Network()1" | translate}} <a href="/#/l3Network">{{"eip.createEip.L3 network page" | translate}}</a> {{"eip.createEip.hasL3Network()2" | translate}}.
+                    </div>
+
+                    <div class="alert alert-warning col-sm-21" ng-show="!vipPage.hasVip() && vipPage.method == 'existing'">
+                        {{"eip.createEip.HINT1" | translate}}
+                    </div>
+
+                    <h4 class="z-win-h4">{{"eip.createEip.SELECT VIP" | translate}}</h4>
+                    <form class="form" id="vipForm">
+                        <div class="form-group col-sm-24">
+                            <label for="method">{{"eip.createEip.VIP METHOD" | translate}}</label>
+                            <select id="method" ng-disabled="vipPage.vip != null" kendo-drop-down-list k-options="vipMethodOptions__" class="z-win-dropdown" ng-model="vipPage.method"></select>
+                            <p class="z-hint">{{"eip.createEip.HINT2" | translate}}</p>
+                        </div>
+
+                        <div class="form-group col-sm-24" ng-show="vipPage.method == 'existing'">
+                            <label for="cvip">{{"eip.createEip.VIP" | translate}}</label>
+                            <select id="cvip" kendo-combo-box k-options="vipListOptions__" class="z-win-dropdown" ng-model="vipPage.vipUuid"></select>
+                            <p class="z-hint">{{"eip.createEip.HINT3" | translate}}</p>
+                        </div>
+
+                        <div class="form-group col-sm-24" ng-show="vipPage.method == 'new'">
+                            <label for="l3nw">{{"eip.createEip.L3 NETWORK" | translate}}</label>
+                            <select id="l3nw" kendo-drop-down-list k-options="l3NetworkListOptions__" class="z-win-dropdown" ng-model="vipPage.l3NetworkUuid"></select>
+                            <p class="z-hint">{{"eip.createEip.HINT4" | translate}}</p>
+                        </div>
+
+                        <div class="form-group col-sm-24" ng-show="vipPage.method == 'new' && vipPage.isVipCreating">
+                            <img src="static/img/ajax-loader.gif" width="17px" height="17px">
+                            <span class="z-label">{{"eip.createEip.Creating new VIP" | translate}} ...</span>
+                        </div>
+
+                        <div class="form-group col-sm-24" ng-show="vipPage.method == 'new' && vipPage.vip != null">
+                            <label for="cvip">{{"eip.createEip.VIP" | translate}}</label>
+                            <p><strong>{{vipPage.vip.ip}}</strong></p>
+                        </div>
+
+                        <div class="form-group col-sm-6" ng-show="vipPage.method == 'new'">
+                            <button type="button" class="btn btn-default" ng-click="vipPage.create()" ng-disabled="!vipPage.canCreate()">
+                                <i class="fa fa-plus" style="font-size: 1.2em"></i>
+                                <span>{{"eip.createEip.Create VIP" | translate}}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="createEipInfo" class="tab-pane">
+                    <div class="alert alert-warning col-sm-21" ng-show="!infoPage.hasVm()">
+                        {{"eip.createEip.HINT5" | translate}}.
+                    </div>
+
+                    <h4 class="z-win-h4">{{"eip.createEip.EIP INFO" | translate}}</h4>
+                    <form class="form" id="formCreate">
+                        <div class="form-group col-sm-24">
+                            <label for="nic">{{"eip.createEip.VM INSTANCE" | translate}}</label>
+                            <select id="nic" kendo-combo-box k-options="vmListOptions__" k-placeholder="'Select VM Instance'" class="z-win-dropdown" ng-model="infoPage.vmNicUuid"></select>
+                            <p class="z-hint">{{"eip.createEip.HINT6" | translate}}</p>
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="name">{{"eip.createEip.NAME" | translate}}</label>
+                            <input class="form-control" type="text" id="name" placeholder="(Required) max length of 255 characters" ng-model="infoPage.name" required data-message="name is required">
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="description">{{"eip.createEip.DESCRIPTION" | translate}}</label>
+                            <textarea  class="form-control" rows="5" id="description" placeholder="(Optional) max length of 2048 characters" ng-model="infoPage.description"></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="form-group col-sm-21">
+                    <button type="button" class="btn btn-primary" ng-disabled="!button.canNextProceed()" ng-click="button.nextClick()">{{button.nextButtonName()}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-7">
+            <div class="z-wizard-bar">
+                <ul class="nav">
+                    <li class="active"><a data-target="#createEipVip" ng-click="button.pageClick('createEipVip')">{{"eip.createEip.SELECT VIP" | translate}}</a></li>
+                    <li><a data-target="#createEipInfo" ng-click="button.pageClick('createEipInfo')">{{"eip.createEip.EIP INFO" | translate}}</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>

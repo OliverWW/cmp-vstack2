@@ -1,0 +1,21 @@
+<div kendo-window="addVmNic__" k-visible="false" k-options="addVmNicOptions__">
+    <div>
+        <div class="alert alert-warning col-sm-21" ng-show="!hasVmNic()">
+            {{"securityGroup.addVmNic.HINT1" | translate }}
+        </div>
+
+        <h4 class="z-win-h4">{{"securityGroup.addVmNic.HINT2" | translate}}{{securityGroupName}}</h4>
+        <form class="form">
+            <div class="form-group col-sm-18">
+                <label for="nic">{{"securityGroup.addVmNic.VM NIC" | translate}}</label>
+                <select id="nic" kendo-multi-select="vmNicList__" k-options="vmNicListOptions__" class="z-win-dropdown"></select>
+                <p class="z-hint">{{"securityGroup.addVmNic.HINT3" | translate}}</p>
+            </div>
+
+            <div class="form-group col-lg-18">
+                <button type="button" class="btn btn-default" ng-click="cancel()">{{"securityGroup.addVmNic.Cancel" | translate}}</button>
+                <button type="button" class="btn btn-primary" ng-disabled="!canProceed()" ng-click="done()">{{"securityGroup.addVmNic.ADD" | translate}}</button>
+            </div>
+        </form>
+    </div>
+</div>

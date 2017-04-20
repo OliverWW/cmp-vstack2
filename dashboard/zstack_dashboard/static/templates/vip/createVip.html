@@ -1,0 +1,55 @@
+<div kendo-window="winCreateVip__" k-visible="false" k-options="winCreateVipOptions__">
+    <div class="row">
+        <div class="col-sm-15">
+            <div class="tab-content">
+                <div id="createVipInfo" class="tab-pane active">
+                    <div class="alert alert-warning col-sm-21" ng-show="!hasL3Network()">
+                        {{"vip.createVip.hasL3Network1()" | translate}}<a href="/#/l3Network">{{"vip.createVip.L3 network page" | translate}}</a> {{"vip.createVip.hasL3Network2()" | translate}}.
+                    </div>
+
+                    <h4 class="z-win-h4">{{"vip.createVip.ACQUIRE VIP" | translate}}</h4>
+                    <form class="form" id="formCreate">
+                        <div class="form-group col-sm-24">
+                            <label for="zone">{{"vip.createVip.ZONE" | translate}}</label>
+                            <select id="zone" kendo-drop-down-list k-options="zoneOptions__" class="z-win-dropdown" ng-model="zoneUuid"></select>
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <label for="l3nw">{{"vip.createVip.L3 NETWORK" | translate}}</label>
+                            <select id="l3nw" kendo-drop-down-list k-options="l3NetworkListOptions__" class="z-win-dropdown" ng-model="infoPage.l3NetworkUuid"></select>
+                            <p class="z-hint">{{"vip.createVip.HINT1" | translate}}</p>
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="name">{{"vip.createVip.NAME" | translate}}</label>
+                            <input class="form-control" type="text" id="name" placeholder="(Required) max length of 255 characters" ng-model="infoPage.name" required data-message="name is required">
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="description">{{"vip.createVip.DESCRIPTION" | translate}}</label>
+                            <textarea  class="form-control" rows="5" id="description" placeholder="(Optional) max length of 2048 characters" ng-model="infoPage.description"></textarea>
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="rip">{{"vip.createVip.REQUIRED IP" | translate}}</label>
+                            <input type="text" class="form-control" id="rip" placeholder="IPv4 address" ng-model="infoPage.requiredIp">
+                            <p class="z-hint">{{"vip.createVip.HINT2" | translate}}</p>
+                            <div class="alert alert-danger col-sm-21" ng-show="!infoPage.isVipValid()">
+                                {{"vip.createVip.HINT3" | translate}}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="form-group col-sm-21">
+                    <button type="button" class="btn btn-primary" ng-disabled="!button.canNextProceed()" ng-click="button.nextClick()">{{button.nextButtonName()}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-7">
+            <div class="z-wizard-bar">
+                <ul class="nav">
+                    <li class="active"><a data-target="#createVipInfo" ng-click="button.pageClick('createVipInfo')">{{"vip.createVip.VIP INFO" | translate}}</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>

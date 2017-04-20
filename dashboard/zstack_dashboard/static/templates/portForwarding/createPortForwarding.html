@@ -1,0 +1,139 @@
+<div kendo-window="winCreatePortForwarding__" k-visible="false" k-options="winCreatePortForwardingOptions__">
+    <div class="row">
+        <div class="col-sm-15">
+            <div class="tab-content">
+                <div id="createPortForwardingVip" class="tab-pane active">
+                    <div class="alert alert-warning col-sm-21" ng-show="!vipPage.hasL3Network() && vipPage.method == 'new'">
+                        {{"portForwarding.createPortForwarding.HINT1" | translate}} <a href="/#/l3Network">{{"portForwarding.createPortForwarding.L3 network page" | translate}}</a> {{"portForwarding.createPortForwarding.HINT2" | translate}}.
+                    </div>
+
+                    <div class="alert alert-warning col-sm-21" ng-show="!vipPage.hasVip() && vipPage.method == 'existing'">
+                        {{"portForwarding.createPortForwarding.HINT3" | translate}}
+                    </div>
+
+                    <h4 class="z-win-h4">{{"portForwarding.createPortForwarding.SELECT VIP" | translate}}</h4>
+                    <form class="form" id="vipForm">
+                        <div class="form-group col-sm-24">
+                            <label for="method">{{"portForwarding.createPortForwarding.VIP METHOD" | translate}}</label>
+                            <select id="method" ng-disabled="vipPage.vip != null" kendo-drop-down-list k-options="vipMethodOptions__" class="z-win-dropdown" ng-model="vipPage.method"></select>
+                            <p class="z-hint">{{"portForwarding.createPortForwarding.HINT4" | translate}}</p>
+                        </div>
+
+                        <div class="form-group col-sm-24" ng-show="vipPage.method == 'existing'">
+                            <label for="cvip">{{"portForwarding.createPortForwarding.VIP" | translate}}</label>
+                            <select id="cvip" kendo-combo-box k-options="vipListOptions__" class="z-win-dropdown" ng-model="vipPage.vipUuid"></select>
+                            <p class="z-hint">{{"portForwarding.createPortForwarding.HINT5" | translate}}</p>
+                        </div>
+
+                        <div class="form-group col-sm-24" ng-show="vipPage.method == 'new'">
+                            <label for="l3nw">{{"portForwarding.createPortForwarding.L3 NETWORK" | translate}}</label>
+                            <select id="l3nw" kendo-drop-down-list k-options="l3NetworkListOptions__" class="z-win-dropdown" ng-model="vipPage.l3NetworkUuid"></select>
+                            <p class="z-hint">{{"portForwarding.createPortForwarding.HINT6" | translate}}</p>
+                        </div>
+
+                        <div class="form-group col-sm-24" ng-show="vipPage.method == 'new' && vipPage.isVipCreating">
+                            <img src="static/img/ajax-loader.gif" width="17px" height="17px">
+                            <span class="z-label">{{"portForwarding.createPortForwarding.Creating new VIP" | translate}} ...</span>
+                        </div>
+
+                        <div class="form-group col-sm-24" ng-show="vipPage.method == 'new' && vipPage.vip != null">
+                            <label for="cvip">{{"portForwarding.createPortForwarding.VIP" | translate}}</label>
+                            <p><strong>{{vipPage.vip.ip}}</strong></p>
+                        </div>
+
+                        <div class="form-group col-sm-6" ng-show="vipPage.method == 'new'">
+                            <button type="button" class="btn btn-default" ng-click="vipPage.create()" ng-disabled="!vipPage.canCreate()">
+                                <i class="fa fa-plus" style="font-size: 1.2em"></i>
+                                <span>{{"portForwarding.createPortForwarding.Create VIP" | translate}}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="createPortForwardingInfo" class="tab-pane">
+                    <h4 class="z-win-h4">{{"portForwarding.createPortForwarding.PORT FORWARDING INFO" | translate}}</h4>
+                    <form class="form" id="formCreate">
+
+                        <div class="form-group col-sm-21">
+                            <label for="name">{{"portForwarding.createPortForwarding.NAME" | translate}}</label>
+                            <input class="form-control" type="text" id="name" placeholder="(Required) max length of 255 characters" ng-model="infoPage.name" required data-message="name is required">
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="description">{{"portForwarding.createPortForwarding.DESCRIPTION" | translate}}</label>
+                            <textarea  class="form-control" rows="5" id="description" placeholder="(Optional) max length of 2048 characters" ng-model="infoPage.description"></textarea>
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="protocol">{{"portForwarding.createPortForwarding.PROTOCOL" | translate}}</label>
+                            <select id="protocol" kendo-drop-down-list k-options="protocolOptions__" class="z-win-dropdown" ng-model="infoPage.protocolType"></select>
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="sport">{{"portForwarding.createPortForwarding.VIP START PORT" | translate}}</label>
+                            <input class="form-control" type="text" id="sport" placeholder="(Required) start port of vip, 1 ~ 65535" ng-model="infoPage.vipPortStart">
+                            <div class="alert alert-danger col-sm-21" ng-show="!infoPage.isVipStartPortValid()">
+                                {{"portForwarding.createPortForwarding.HINT7" | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="eport">{{"portForwarding.createPortForwarding.VIP END PORT" | translate}}</label>
+                            <input class="form-control" type="text" id="eport" placeholder="(Required) end port of vip, 1 ~ 65535" ng-model="infoPage.vipPortEnd">
+                            <div class="alert alert-danger col-sm-21" ng-show="!infoPage.isVipEndPortValid()">
+                                {{"portForwarding.createPortForwarding.HINT7" | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="gsport">{{"portForwarding.createPortForwarding.GUEST START PORT" | translate}}</label>
+                            <input class="form-control" type="text" id="gsport" placeholder="(Required) start port of guest nic ip, 1 ~ 65535" ng-model="infoPage.privatePortStart">
+                            <div class="alert alert-danger col-sm-21" ng-show="!infoPage.isGuestStartPortValid()">
+                               {{"portForwarding.createPortForwarding.HINT7" | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="geport">{{"portForwarding.createPortForwarding.GUEST END PORT" | translate}}</label>
+                            <input class="form-control" type="text" id="geport" placeholder="(Required) end port of guest nic ip, 1 ~ 65535" ng-model="infoPage.privatePortEnd">
+                            <div class="alert alert-danger col-sm-21" ng-show="!infoPage.isGuestEndPortValid()">
+                                {{"portForwarding.createPortForwarding.HINT7" | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="cidr">{{"portForwarding.createPortForwarding.ALLOWED CIDR" | translate}}</label>
+                            <input class="form-control" type="text" id="cidr" placeholder="(Optional) CIDR allowed to access" ng-model="infoPage.allowedCidr">
+                            <div class="alert alert-danger col-sm-21" ng-show="!infoPage.isCIDRValid()">
+                                {{"portForwarding.createPortForwarding.HINT8" | translate}}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="attachVm" class="tab-pane">
+                    <div class="alert alert-warning col-sm-21" ng-show="!attachPage.hasVm()">
+                        {{"portForwarding.createPortForwarding.HINT9" | translate}}
+                    </div>
+
+                    <h4 class="z-win-h4">{{"portForwarding.createPortForwarding.ATTACH VM NIC" | translate}}</h4>
+                    <form class="form" id="formAttach">
+                        <div class="form-group col-sm-24">
+                            <label for="nic">{{"portForwarding.createPortForwarding.VM INSTANCE" | translate}}</label>
+                            <select id="nic" kendo-combo-box k-options="vmListOptions__" k-placeholder="'Select VM Instance'" class="z-win-dropdown" ng-model="attachPage.vmNicUuid"></select>
+                            <p class="z-hint">{{"portForwarding.createPortForwarding.HINT10" | translate}}</p>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="form-group col-sm-21">
+                    <button type="button" class="btn btn-primary" ng-disabled="!button.canNextProceed()" ng-click="button.nextClick()">{{button.nextButtonName()}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-7">
+            <div class="z-wizard-bar">
+                <ul class="nav">
+                    <li class="active"><a data-target="#createPortForwardingVip" ng-click="button.pageClick('createPortForwardingVip')">{{"portForwarding.createPortForwarding.SELECT VIP" | translate}}</a></li>
+                    <li><a data-target="#createPortForwardingInfo" ng-click="button.pageClick('createPortForwardingInfo')">{{"portForwarding.createPortForwarding.PORT FORWARDING INFO" | translate}}</a></li>
+                    <li><a data-target="#attachVm" ng-click="button.pageClick('attachVm')">{{"portForwarding.createPortForwarding.ATTACH VM NIC" | translate}}</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,209 @@
+<div kendo-window="winCreateL3Network__" k-visible="false" k-options="winCreateL3NetworkOptions__">
+    <div class="row">
+        <div class="col-sm-15">
+            <div class="tab-content">
+                <div id="createL3NetworkInfo" class="tab-pane active">
+                    <div class="alert alert-warning col-sm-21" ng-show="!infoPage.hasL2Network()">
+                        {{"l3Network.createL3Network.HINT" | translate}} <a href="/#/l2Network">{{"l3Network.createL3Network.L2 network page" | translate}}</a> to create a new one.
+                    </div>
+
+                    <h4 class="z-win-h4">{{"l3Network.createL3Network.CREATE L3 NETWORK" | translate}}</h4>
+                    <form class="form" id="formCreate">
+                        <div class="form-group col-sm-24">
+                            <label for="zone">{{"l3Network.createL3Network.ZONE" | translate}}</label>
+                            <select id="zone" kendo-drop-down-list k-options="optionsZoneList__" class="z-win-dropdown" ng-model="infoPage.zoneUuid"></select>
+                            <p class="z-hint">{{"l3Network.createL3Network.HINT2" | translate}}</p>
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <label for="l2">{{"l3Network.createL3Network.L2 NETWORK" | translate}}</label>
+                            <select id="l2" kendo-drop-down-list k-options="optionsL2NetworkList__" class="z-win-dropdown" ng-model="infoPage.l2NetworkUuid"></select>
+                            <p class="z-hint">{{"l3Network.createL3Network.HINT3" | translate}}</p>
+                        </div>
+                        <div class="form-group col-sm-18">
+                            <label for="name">{{"l3Network.createL3Network.NAME" | translate}}</label>
+                            <input class="form-control" type="text" id="name" placeholder="(Required) max length of 255 characters" ng-model="infoPage.name" required data-message="name is required">
+                        </div>
+                        <div class="form-group col-sm-18">
+                            <label for="description">{{"l3Network.createL3Network.DESCRIPTION" | translate}}</label>
+                            <textarea  class="form-control" rows="5" id="description" placeholder="(Optional) max length of 2048 characters" ng-model="infoPage.description"></textarea>
+                        </div>
+                        <div class="form-group col-sm-18">
+                            <label for="description">{{"l3Network.createL3Network.DOMAIN NAME" | translate}}</label>
+                            <input class="form-control" rows="5" id="domain" placeholder="(Optional) DNS domain name" ng-model="infoPage.dnsDomain"></textarea>
+                        </div>
+                        <div class="form-group col-sm-18">
+                            <label for="type">{{"l3Network.createL3Network.TYPE" | translate}}</label>
+                            <select id="type" kendo-drop-down-list k-options="optionsL3NetworkTypeList__" class="z-win-dropdown" ng-model="infoPage.type"></select>
+                            <p class="z-hint">{{"l3Network.createL3Network.HINT4" | translate}}</p>
+                        </div>
+                        <div class="form-group col-sm-18">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="infoPage.system"> <strong>{{"l3Network.createL3Network.SYSTEM NETWORK" | translate}}</strong>
+                                </label>
+                            </div>
+                            <p class="z-hint">{{"l3Network.createL3Network.HINT5" | translate}}</p>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="createL3NetworkIpRange" class="tab-pane">
+                    <h4 class="z-win-h4">{{"l3Network.createL3Network.ADD IP RANGE" | translate}}</h4>
+                    <form class="form" id="iprange">
+                        <div class="form-group col-sm-21">
+                            <label for="iprangeName">{{"l3Network.createL3Network.NAME" | translate}}</label>
+                            <input class="form-control" type="text" id="ipRangeName" placeholder="(Required) max of 255 characters" ng-model="ipRangePage.name">
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="idesc">{{"l3Network.createL3Network.DESCRIPTION" | translate}}</label>
+                            <textarea  class="form-control" rows="5" id="idesc" placeholder="(Optional) max length of 2048 characters" ng-model="ipRangePage.description"></textarea>
+                        </div>
+                        <div class="form-group col-sm-21">
+                            <label for="method">{{"l3Network.createL3Network.METHOD" | translate}}</label>
+                            <select id="method" kendo-drop-down-list k-options="methodOptions__" class="z-win-dropdown" ng-model="ipRangePage.method"></select>
+                            <p class="z-hint">{{"l3Network.createL3Network.Choose using CIDR or IP range" | translate}}</p>
+                        </div>
+
+                        <div ng-switch="ipRangePage.method">
+                            <div ng-switch-when="range">
+                                <div class="form-group col-sm-21">
+                                    <label for="sip">{{"l3Network.createL3Network.START IP" | translate}}</label>
+                                    <input class="form-control" type="text" id="sip" placeholder="(Required) IP range start" ng-model="ipRangePage.startIp">
+                                    <div class="alert alert-danger col-sm-21" ng-show="!ipRangePage.isStartIpValid()">
+                                        {{"l3Network.createL3Network.Not a valid IPv4 address" | translate}}
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-21">
+                                    <label for="eip">{{"l3Network.createL3Network.END IP" | translate}}</label>
+                                    <input class="form-control" type="text" id="eip" placeholder="(Required) IP range end" ng-model="ipRangePage.endIp">
+                                    <div class="alert alert-danger col-sm-21" ng-show="!ipRangePage.isEndIpValid()">
+                                        {{"l3Network.createL3Network.Not a valid IPv4 address" | translate}}
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-21">
+                                    <label for="netmask">{{"l3Network.createL3Network.NETMASK" | translate}}</label>
+                                    <input class="form-control" type="text" id="netmask" placeholder="(Required) netmask" ng-model="ipRangePage.netmask">
+                                    <div class="alert alert-danger col-sm-21" ng-show="!ipRangePage.isNetmaskValid()">
+                                        {{"l3Network.createL3Network.Not a valid IPv4 address" | translate}}
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-21">
+                                    <label for="gateway">{{"l3Network.createL3Network.GATEWAY" | translate}}</label>
+                                    <input class="form-control" type="text" id="gateway" placeholder="(Required) gateway" ng-model="ipRangePage.gateway">
+                                    <div class="alert alert-danger col-sm-21" ng-show="!ipRangePage.isGatewayValid()">
+                                        {{"l3Network.createL3Network.Not a valid IPv4 address" | translate}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-switch-when="cidr">
+                                <div class="form-group col-sm-21">
+                                    <label for="cidr">{{"l3Network.createL3Network.NETWORK CIDR" | translate}}</label>
+                                    <input class="form-control" type="text" id="cidr" placeholder="(Required) for example, 10.0.0.0/24" ng-model="ipRangePage.cidr">
+                                    <div class="alert alert-danger col-sm-18" ng-show="!ipRangePage.isCidrValid()">
+                                        {{"l3Network.createL3Network.HINT6" | translate}}.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-6">
+                            <button type="button" class="btn btn-default" ng-click="ipRangePage.add()" ng-disabled="!ipRangePage.canAdd()">
+                                <i class="fa fa-plus" style="font-size: 1.2em"></i>
+                                <span>{{"l3Network.createL3Network.Add" | translate}}</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div ng-switch="ipRangePage.isGridShow()">
+                        <div ng-switch-when="false" class="col-sm-21">
+                            <p class="z-hint">{{"l3Network.createL3Network.HINT7" | translate}}</p>
+                        </div>
+                        <div ng-switch-when="true" class="col-sm-21">
+                            <div kendo-grid k-options="optionsIpRangeGrid__"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="createL3NetworkDns" class="tab-pane">
+                    <h4 class="z-win-h4">{{"l3Network.createL3Network.ADD DNS" | translate}}</h4>
+                    <form class="form">
+                        <div class="form-group col-sm-21">
+                            <label for="dns">{{"l3Network.createL3Network.DNS" | translate}}</label>
+                            <input class="form-control" type="text" id="dns" placeholder="(Required) IPv4 address of DNS server" ng-model="dnsPage.dns">
+                            <div class="alert alert-danger col-sm-21" ng-show="!dnsPage.isDnsValid()">
+                                {{"l3Network.createL3Network.Not a valid IPv4 address" | translate}}
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-6">
+                            <button type="button" class="btn btn-default" ng-click="dnsPage.add()" ng-disabled="!dnsPage.canAdd()">
+                                <i class="fa fa-plus" style="font-size: 1.2em"></i>
+                                <span>{{"l3Network.createL3Network.Add" | translate}}</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div ng-switch="dnsPage.isGridShow()">
+                        <div ng-switch-when="false" class="col-sm-21">
+                            <p class="z-hint">{{"l3Network.createL3Network.HINT8" | translate}}</p>
+                        </div>
+                        <div ng-switch-when="true" class="col-sm-21">
+                            <div kendo-grid k-options="optionsDnsGrid__"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="createL3NetworkService" class="tab-pane">
+                    <h4 class="z-win-h4">{{"l3Network.createL3Network.SELECT NETWORK SERVICE" | translate}}</h4>
+                    <form class="form">
+                        <div class="form-group col-sm-24">
+                            <label for="provider">{{"l3Network.createL3Network.PROVIDER" | translate}}</label>
+                            <select id="provider" kendo-drop-down-list k-options="optionsProviderList__" class="z-win-dropdown" ng-model="servicePage.providerUuid"></select>
+                            <p class="z-hint">{{"l3Network.createL3Network.HINT9" | translate}}</p>
+                        </div>
+                        <div class="form-group col-sm-24">
+                            <label for="service">{{"l3Network.createL3Network.SERVICE" | translate}}</label>
+                            <select id="service" kendo-drop-down-list k-options="optionsServiceList__" class="z-win-dropdown" ng-model="servicePage.serviceType"></select>
+                            <p class="z-hint">{{"l3Network.createL3Network.HINT10" | translate}}</p>
+                        </div>
+
+                        <div class="form-group col-sm-6">
+                            <button type="button" class="btn btn-default" ng-click="servicePage.add()" ng-disabled="!servicePage.canAdd()">
+                                <i class="fa fa-plus" style="font-size: 1.2em"></i>
+                                <span>{{"l3Network.createL3Network.Add" | translate}}</span>
+                            </button>
+                        </div>
+
+                        <div ng-switch="servicePage.isGridShow()">
+                            <div ng-switch-when="false" class="col-sm-21">
+                                <p class="z-hint">{{"l3Network.createL3Network.HINT11" | translate}}</p>
+                            </div>
+                            <div ng-switch-when="true" class="col-sm-21">
+                                <div kendo-grid k-options="optionsNetworkServiceGrid__"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="form-group col-sm-21" style="margin-top: 10px">
+                    <button type="button" class="btn btn-default" ng-click="button.previousClick()" ng-disabled="!button.canPreviousProceed()">{{"l3Network.createL3Network.Previous" | translate}}</button>
+                    <button type="button" class="btn btn-primary" ng-disabled="!button.canNextProceed()" ng-click="button.nextClick()">{{button.nextButtonName()}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-7">
+            <div class="z-wizard-bar">
+                <ul class="nav">
+                    <li class="active"><a data-target="#createL3NetworkInfo" ng-click="button.pageClick('createL3NetworkInfo')">{{"l3Network.createL3Network.L3 NETWORK INFO" | translate}}</a></li>
+                    <li ng-class="{disabled: !psPage.isActive()}"><a data-target="#createL3NetworkIpRange" ng-click="button.pageClick('createL3NetworkIpRange')">{{"l3Network.createL3Network.ADD IP RANGE" | translate}}</a></li>
+                    <li ng-class="{disabled: !psPage.isActive()}"><a data-target="#createL3NetworkDns" ng-click="button.pageClick('createL3NetworkDns')">{{"l3Network.createL3Network.ADD DNS" | translate}}</a></li>
+                    <li ng-class="{disabled: !psPage.isActive()}"><a data-target="#createL3NetworkService" ng-click="button.pageClick('createL3NetworkService')">{{"l3Network.createL3Network.SELECT NETWORK SERVICE" | translate}}</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,25 @@
+<div kendo-window="detachVmInstance__" k-options="optionsDetachVm__" k-visible="false">
+    <div>
+        <h4 class="z-win-h4">{{ "volume.detachVm.DETACH VM INSTANCE" | translate }}</h4>
+
+        <table class="table z-table-borderless">
+            <tr>
+                <td><span class="z-label">{{ "volume.detachVm.NAME:" | translate }}</span></td>
+                <td><span class="z-description">{{vm.name}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{ "volume.detachVm.STATE:" | translate }}</span></td>
+                <td><span class="{{vmStateLabel()}}">{{vm.state}}</span></td>
+            </tr>
+            <tr>
+                <td><span class="z-label">{{ "volume.detachVm.HYPERVISOR:" | translate }}</span></td>
+                <td><span>{{vm.hypervisorType}}</span></td>
+            </tr>
+        </table>
+
+        <p style="color: red" ng-show="!isVmInCorrectState()">{{ "volume.detachVm.HINT" | translate }}</p>
+
+        <button type="button" class="btn btn-default" ng-click="cancel()">{{ "volume.detachVm.Cancel" | translate }}</button>
+        <button type="button" class="btn btn-danger" ng-disabled="!canProceed()" ng-click="done()">{{ "volume.detachVm.Detach" | translate }}</button>
+    </div>
+</div>
